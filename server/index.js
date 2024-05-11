@@ -4,6 +4,7 @@ dotenv.config();
 import connectDB from './db/connect.js';
 import authRoutes from './routes/authRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use('/api/users', userRoutes);
 
 
 app.listen(PORT, () => {
