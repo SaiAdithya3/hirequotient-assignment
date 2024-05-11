@@ -89,10 +89,3 @@ export const logoutUser = (req, res) => {
 
 
 
-// {
-//     "username": "shiva2",
-//     "email": "shiva2@mail.com",
-//     "password": "123456",
-//     "confirmPassword": "123456",
-//     "gender": "male"
-//   }
