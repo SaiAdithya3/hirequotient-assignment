@@ -18,9 +18,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-      console.log('Form Data:', formData);
+      // console.log('Form Data:', formData);
       toast.success('User logged successfully');
-      console.log('Response:', response.data);
+      // console.log('Response:', response.data);
+      localStorage.setItem('chat-user', JSON.stringify(response.data));
       navigate('/chat');
     } catch (error) {
       // console.error('Error:', error.response.data);

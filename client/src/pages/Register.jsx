@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AiOutlineMail, AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 import { toast } from 'sonner';
+import { AuthContext } from '../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Register = () => {
     confirmPassword: '',
     gender: 'male'
   });
+  // const { setAuthUser} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -22,9 +24,10 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
-      console.log('Form Data:', formData);
+      // console.log('Form Data:', formData);
       toast.success('User registered successfully');
-      console.log('Response:', response.data);
+      localStorage.setItem('chat-user', JSON.stringify(response.data));
+      // console.log('Response:', response.data);
       navigate('/chat');
     } catch (error) {
       console.error('Error:', error.response.data);
