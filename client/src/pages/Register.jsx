@@ -1,7 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { AiOutlineMail, AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
+import { toast } from 'sonner';
 
 const Register = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    gender: 'male'
+  });
+  const navigate = useNavigate();
+
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
+      console.log('Form Data:', formData);
+      toast.success('User registered successfully');
+      console.log('Response:', response.data);
+      navigate('/chat');
+    } catch (error) {
+      console.error('Error:', error.response.data);
+      console.log(error);
+      toast.error('User registration failed');
+    }
+  };
+
   return (
     <>
       <div className="w-full flex items-center justify-center p-10 h-screen bg-gradient-to-r from-red-500 to-orange-500">
@@ -9,10 +40,7 @@ const Register = () => {
           <div className=" px-6 py-24 mx-auto lg:py-32">
             <div className="lg:flex px-12">
               <div className="lg:w-1/2">
-                {/* <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" /> */}
-
                 <h1 className="mt-4 text-gray-600 md:text-lg">Welcome back</h1>
-
                 <h1 className="mt-4 text-2xl font-bold text-gray-800 capitalize lg:text-3xl ">
                   Register to create your new account
                 </h1>
@@ -20,65 +48,76 @@ const Register = () => {
                   <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
                 </h1>
               </div>
-
               <div className="mt-8 lg:w-1/2 lg:mt-0">
-                <form className="w-full lg:max-w-xl">
+                <form onSubmit={handleSubmit} className="w-full lg:max-w-xl">
                   <div className="relative flex items-center">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                      <AiOutlineMail className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="email" className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:text-gray-300  focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Email address" />
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                      placeholder="Email address"
+                    />
                   </div>
-
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <AiOutlineUser className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="text" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Username" />
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                      placeholder="Username"
+                    />
                   </div>
-
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <AiOutlineLock className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="password" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                      placeholder="Password"
+                    />
                   </div>
-
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <AiOutlineLock className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="password" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Confirm Password" />
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                      placeholder="Confirm Password"
+                    />
                   </div>
-
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      {/* Gender icon */}
                     </span>
-
-                    {/* <input type=""  /> */}
-                    <select className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password">
-                      <option value="Male" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus ">Male</option>
-                      <option value="Male" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus ">Female</option>
+                    <select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                    >
+                      <option value="male" className="text-gray-700">Male</option>
+                      <option value="female" className="text-gray-700">Female</option>
                     </select>
                   </div>
-
                   <div className="mt-8 md:flex md:items-center">
-                    <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-all duration-300 transform bg-purple-600 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                    <button type='submit' className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-all duration-300 transform bg-purple-600 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                       Sign in
                     </button>
 
@@ -93,7 +132,7 @@ const Register = () => {
         </section>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

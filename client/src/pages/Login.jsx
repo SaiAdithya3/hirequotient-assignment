@@ -1,7 +1,34 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
+import { toast } from 'sonner';
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+  const navigate = useNavigate();
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      console.log('Form Data:', formData);
+      toast.success('User logged successfully');
+      console.log('Response:', response.data);
+      navigate('/chat');
+    } catch (error) {
+      // console.error('Error:', error.response.data);
+      console.log(error);
+      toast.error('Login failed');
+    }
+  };
+
   return (
     <>
       <div className="w-full flex items-center justify-center p-10 h-screen bg-gradient-to-r from-red-400 to-orange-500">
@@ -22,28 +49,27 @@ const Login = () => {
               </div>
 
               <div className="mt-8 lg:w-1/2 lg:mt-0">
-                <form className="w-full lg:max-w-xl">
+                <form onSubmit={handleSubmit} className="w-full lg:max-w-xl">
                   <div className="relative flex items-center">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                      <AiOutlineUser className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="email" className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:text-gray-300  focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Email address" />
+                    <input
+                      type='text'
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange} className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11  focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Username" />
                   </div>
 
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <AiOutlineLock className="w-6 h-6 mx-3 text-gray-300" />
                     </span>
-
-                    <input type="password" className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
+                    <input type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange} className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
                   </div>
-
-
 
                   <div className="mt-8 md:flex md:items-center">
                     <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-all duration-300 transform bg-purple-600 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
