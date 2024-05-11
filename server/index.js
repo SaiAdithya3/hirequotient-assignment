@@ -7,8 +7,9 @@ import messageRoutes from './routes/messageRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { app, server } from "./socket/socket.js";
 
-const app = express();
+// const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -26,7 +27,7 @@ app.use("/api/messages", messageRoutes);
 app.use('/api/users', userRoutes);
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     connectDB();
     console.log(`Server is running on port ${PORT}! 🎉`);
 });

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import Message from './Message';
+import socket from '../sockets/socket';
 
 const Conversation = ({ selectedUser }) => {
     const [messages, setMessages] = useState([]);
