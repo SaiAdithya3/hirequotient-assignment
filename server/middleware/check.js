@@ -3,7 +3,7 @@ import User from "../models/User.js";
 
 const checkuser = async (req, res, next) => {
 	try {
-		const token = req.cookies.jwt;
+		const token = req.cookies.token;
 
 		if (!token) {
 			return res.status(401).json({ error: "Unauthorized - No Token Provided" });
@@ -14,8 +14,8 @@ const checkuser = async (req, res, next) => {
 		if (!decoded) {
 			return res.status(401).json({ error: "Unauthorized - Invalid Token" });
 		}
-
-		const user = await User.findById(decoded.userId).select("-password");
+		// console.log(decoded);
+		const user = await User.findById(decoded.id).select("-password");
 
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
