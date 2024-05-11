@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 import { toast } from 'sonner';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
     password: '',
   });
   const navigate = useNavigate();
+  const { setAuthUser} = useContext(AuthContext);
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,7 +23,8 @@ const Login = () => {
       // console.log('Form Data:', formData);
       toast.success('User logged successfully');
       // console.log('Response:', response.data);
-      localStorage.setItem('chat-user', JSON.stringify(response.data));
+      // localStorage.setItem('chat-user', JSON.stringify(response.data));
+      setAuthUser(response.data);
       navigate('/chat');
     } catch (error) {
       // console.error('Error:', error.response.data);

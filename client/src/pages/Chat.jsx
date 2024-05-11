@@ -5,9 +5,9 @@ import Conversation from '../components/Conversation';
 const Chat = () => {
   return (
     <>
-        <div className="w-full flex items-center justify-center">
+        <div className="p-14 h-screen w-full flex ">
             <Sidebar />
-            <Conversation />
+            {/* <Conversation /> */}
         </div>
     </>
   )

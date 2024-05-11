@@ -13,7 +13,7 @@ const Register = () => {
     confirmPassword: '',
     gender: 'male'
   });
-  // const { setAuthUser} = useContext(AuthContext);
+  const { setAuthUser} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -26,7 +26,8 @@ const Register = () => {
       const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
       // console.log('Form Data:', formData);
       toast.success('User registered successfully');
-      localStorage.setItem('chat-user', JSON.stringify(response.data));
+      // localStorage.setItem('chat-user', JSON.stringify(response.data));
+      setAuthUser(response.data);
       // console.log('Response:', response.data);
       navigate('/chat');
     } catch (error) {

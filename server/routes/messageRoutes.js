@@ -4,7 +4,7 @@ import checkuser from "../middleware/check.js";
 
 const router = express.Router();
 
-router.get("/:id", checkuser, getMessages);
-router.post("/send/:id", checkuser, sendMessage);
+router.get("/:senderId/:recieverId", getMessages);
+router.post("/send/:id", sendMessage);
 
 export default router;
