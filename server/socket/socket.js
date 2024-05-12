@@ -1,29 +1,41 @@
-import { Server } from 'socket.io';
-import http from 'http';
-import express from 'express';
+import { Server } from "socket.io";
+import http from "http";
 
-const app = express();
+const server = http.createServer();
 
-const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: ["http://localhost:5173"],
-        methods: ["GET", "POST"],
-    },
+  cors: {
+    origin: "*",
+  },
 });
 
-io.on('connection', (socket) => {
-    console.log('A user connected');
+const userSocketMap = {};
 
-    socket.on('disconnect', () => {
-        console.log('A user disconnected');
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("new-user", (userId) => {
+    userSocketMap[userId] = socket.id;
+    console.log(`User ${userId} connected with socket ID ${socket.id}`);
+    io.emit("online-users", Object.keys(userSocketMap));
+  });
+
+  socket.on("new-message", (message) => {
+    console.log("New message received:", message);
+    io.emit("new-message", message);
+  });
+
+  socket.on("disconnect", () => {
+
+    Object.keys(userSocketMap).forEach((userId) => {
+      if (userSocketMap[userId] === socket.id) {
+        delete userSocketMap[userId];
+        console.log(`User ${userId} disconnected`);
+        io.emit("online-users", Object.keys(userSocketMap));
+      }
     });
+  });
 
-    socket.on('sendMessage', (data) => {
-        console.log('Message received:', data);
-
-        io.emit('newMessage', data);
-    });
 });
 
-export { app, io, server };
+export default io;
