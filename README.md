@@ -4,6 +4,8 @@
 
 *Backend Deployment*: https://backend.render.app/
 
+*API Documentation*: https://documenter.getpostman.com/view/19271450/2sA3JNaL7H
+
 # Chat Application
 
 Welcome to the Chat Application! This application allows users to chat with each other in real-time.
