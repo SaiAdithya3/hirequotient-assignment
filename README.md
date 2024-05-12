@@ -1,6 +1,6 @@
 ***HireQuotient Assignment***
 
-*Frontend Deployment*: https://frontend.vercel.app/
+*Frontend Deployment*: https://chatapplication-eta.vercel.app/
 
 *Backend Deployment*: https://backend.render.app/
 
