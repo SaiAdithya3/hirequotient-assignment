@@ -2,7 +2,7 @@
 
 *Frontend Deployment*: https://chatapplication-eta.vercel.app/
 
-*Backend Deployment*: https://backend.render.app/
+*Backend Deployment*: https://chatapplication-2tey.onrender.com
 
 *API Documentation*: https://documenter.getpostman.com/view/19271450/2sA3JNaL7H
 
