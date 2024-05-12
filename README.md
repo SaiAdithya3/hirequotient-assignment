@@ -6,6 +6,8 @@
 
 *API Documentation*: https://documenter.getpostman.com/view/19271450/2sA3JNaL7H
 
+( in the frontend deployment, socket doesn't work due to few security reasons by render.com deployment service. If you want to access the real time application, please clone the repository and run in your machine locally.)
+
 # Chat Application
 
 Welcome to the Chat Application! This application allows users to chat with each other in real-time.
