@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import Conversation from '../components/Conversation';
 import { useSocketContext } from '../context/SocketContext';
+import { toast } from 'sonner';
 
 const Sidebar = () => {
     const [users, setUsers] = useState([]);
@@ -13,15 +14,28 @@ const Sidebar = () => {
     const [showNewConversationModal, setShowNewConversationModal] = useState(false);
     const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
     const [modalSearchQuery, setModalSearchQuery] = useState('');
+    const [userStatus, setUserStatus] = useState('available');
+    const [mainusers, setMainUsers] = useState([]);
+    const [person, setPerson] = useState([]);
 
 
     useEffect(() => {
-        console.log('Online users:', onlineUsers);
-    }, [onlineUsers]);
+        axios.post('http://localhost:5000/api/users/details', {
+            userId: authUser && authUser._id
+        })
+            .then(res => {
+                console.log(res.data);
+                setMainUsers(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+                toast.error('Error fetching user details');
+            });
+    }, []);
 
     useEffect(() => {
         axios.post('http://localhost:5000/api/users/check', {
-            userId: authUser._id
+            userId: authUser && authUser._id
         })
             .then(res => {
                 const users = res.data.map(conversation => conversation.participants.filter(participant => participant._id !== authUser._id));
@@ -31,21 +45,23 @@ const Sidebar = () => {
             })
             .catch(err => {
                 console.log(err);
+                toast.error('Error fetching conversations');
             });
     }, [selectedUser]);
 
     useEffect(() => {
         axios.get('http://localhost:5000/api/users').then(res => {
             setAllUsers(res.data);
-            // console.log(allusers)
         }).catch(err => {
             console.log(err);
+            toast.error('Error fetching users');
         });
     }, []);
+
     const handleUserSelection = (user) => {
         setSelectedUser(user);
         setShowNewConversationModal(false);
-    }
+    };
 
     const isUserOnline = (userId) => {
         return onlineUsers.includes(userId);
@@ -67,12 +83,31 @@ const Sidebar = () => {
         user.username.toLowerCase().includes(modalSearchQuery.toLowerCase())
     );
 
+    // Function to handle status change
+    const handleChangeStatus = async (status) => {
+        try {
+            await axios.put('http://localhost:5000/api/users/status', {
+                userId: authUser._id,
+                status: status
+            });
+            setUserStatus(status);
+            console.log('Status changed successfully');
+            console.log(status)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="w-full flex flex-row items-center gap-5 h-full">
             <div className="flex flex-col h-full justify-between p-3 rounded-xl items-center gap-5 bg-red-100">
                 <div className="gap-5 flex flex-col w-full">
-
                     <h1 className="text-2xl text-center font-bold">Users</h1>
+                    <p className="text-sm text-center">{mainusers.status}</p>
+                    <div className="text-sm">
+                        <button className="p-2 bg-blue-500 text-white rounded-md mr-2" onClick={() => handleChangeStatus('available')}>Available</button>
+                        <button className="p-2 bg-yellow-500 text-white rounded-md" onClick={() => handleChangeStatus('busy')}>Busy</button>
+                    </div>
                     <input
                         type="text"
                         placeholder="Search users"
@@ -107,7 +142,7 @@ const Sidebar = () => {
                 </div>
             </div>
 
-            <Conversation selectedUser={selectedUser} />
+            <Conversation selectedUser={selectedUser} status={userStatus} />
             {showNewConversationModal && (
                 <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
                     <div className="w-1/3 bg-red-100 p-4 rounded-lg">
@@ -124,7 +159,6 @@ const Sidebar = () => {
                                 <div key={index} className="flex items-center gap-2 p-2 bg-gray-100 rounded-md" onClick={() => handleUserSelection(user)}>
                                     <img src={user.profilePic} alt={user.username} className="w-10 h-10 object-cover rounded-full" />
                                     <span className="text-sm font-semibold">{user.username}</span>
-
                                 </div>
                             ))}
                         </div>
@@ -132,6 +166,9 @@ const Sidebar = () => {
                     </div>
                 </div>
             )}
+
+            {/* Button to change user status */}
+
         </div>
     );
 }

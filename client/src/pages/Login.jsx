@@ -23,7 +23,7 @@ const Login = () => {
       // console.log('Form Data:', formData);
       toast.success('User logged successfully');
       // console.log('Response:', response.data);
-      // localStorage.setItem('chat-user', JSON.stringify(response.data));
+      localStorage.setItem('chat-user', JSON.stringify(response.data));
       setAuthUser(response.data);
       navigate('/chat');
     } catch (error) {

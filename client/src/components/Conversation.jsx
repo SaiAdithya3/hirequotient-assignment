@@ -4,14 +4,34 @@ import { AuthContext } from '../context/AuthContext';
 import { MessageContext } from '../context/MessageContext';
 import Message from './Message';
 import ImageKit from 'imagekit';
+import { toast } from 'sonner'
 
-const Conversation = ({ selectedUser }) => {
+const Conversation = ({ selectedUser, status }) => {
+    // console.log(status)
     const [messages, setMessages] = useState([]);
     const { messag, setMessag } = useContext(MessageContext);
     const [newMessageText, setNewMessageText] = useState('');
     const { authUser } = useContext(AuthContext);
     const { sendMessage } = useContext(MessageContext);
     const messagesEndRef = useRef(null);
+    const [mainusers, setMainUsers] = useState([]);
+
+    useEffect(() => {
+        axios.post('http://localhost:5000/api/users/details', {
+            userId: selectedUser && selectedUser._id
+        })
+            .then(res => {
+                console.log(res.data);
+                setMainUsers(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+                toast.error('Error fetching user details');
+            });
+    });
+    console.log(mainusers)
+
+
     const imagekit = new ImageKit({
         publicKey: "public_ffNQ43/5mSLdUUnli2yQpX2nlxU=",
         privateKey: "private_fnAbFnaYL6M4mb1q0gVH0KsyGG4=",
@@ -30,6 +50,7 @@ const Conversation = ({ selectedUser }) => {
                 })
                 .catch(err => {
                     console.error("Error fetching messages:", err);
+                    toast.error('Error fetching messages');
                 });
         }
     }, [messag, selectedUser]);
@@ -42,13 +63,15 @@ const Conversation = ({ selectedUser }) => {
         try {
             const response = await axios.post(`http://localhost:5000/api/messages/send/${selectedUser._id}`, {
                 message: newMessageText,
-                senderId: authUser._id
+                senderId: authUser._id,
+                status: selectedUser.status
             });
             sendMessage(response.data.newMessage);
             setNewMessageText('');
             scrollToBottom();
         } catch (error) {
             console.error("Error sending message:", error);
+            toast.error('Error sending message');
         }
     };
 
@@ -59,6 +82,7 @@ const Conversation = ({ selectedUser }) => {
             const fileType = getFileType(fileExtension);
             if (!fileType) {
                 console.error('Unsupported file type');
+                toast.error('Unsupported file type');
                 return;
             }
 
@@ -85,6 +109,7 @@ const Conversation = ({ selectedUser }) => {
             event.target.value = '';
         } catch (error) {
             console.error('Error uploading file:', error);
+            toast.error('Error uploading file');
         }
     };
 
@@ -100,7 +125,7 @@ const Conversation = ({ selectedUser }) => {
 
     return (
         <div className="w-3/4 bg-yellow-100 h-full flex rounded-2xl flex-col">
-            <h1 className="text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">{selectedUser ? `Conversation with ${selectedUser.username}` : 'Select a user to start conversation'}</h1>
+            <h1 className="text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">{selectedUser ? `Conversation with ${selectedUser.username} - ${mainusers.status}` : 'Select a user to start conversation'}</h1>
             <div className="p-8 overflow-y-auto flex-grow">
                 <div className="rounded-lg h-full">
                     {messages.map((message, index) => (

@@ -55,3 +55,24 @@ export const changeUserStatus = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+export const getUserDetails = async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Return user details
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error in getUserDetails:", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
