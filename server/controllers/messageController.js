@@ -1,6 +1,6 @@
 import Conversation from '../models/Conversation.js';
 import Message from '../models/message.js';
-import User from '../models/User.js';
+import User from '../models/user.js';
 import io from '../socket/socket.js';
 import { getGeminiResponse } from '../controllers/geminiResponse.js';
 
