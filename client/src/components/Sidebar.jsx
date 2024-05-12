@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import Conversation from '../components/Conversation';
 import { useSocketContext } from '../context/SocketContext';
 import { toast } from 'sonner';
+import Profile from './Profile';
 
 const Sidebar = () => {
     const [users, setUsers] = useState([]);
@@ -16,8 +17,8 @@ const Sidebar = () => {
     const [modalSearchQuery, setModalSearchQuery] = useState('');
     const [userStatus, setUserStatus] = useState('available');
     const [mainusers, setMainUsers] = useState([]);
-    const [person, setPerson] = useState([]);
-
+    const [profileModal, setProfileModal] = useState(false);
+    const [profileDetails, setProfileDetails] = useState(null);
 
     useEffect(() => {
         axios.post('http://localhost:5000/api/users/details', {
@@ -72,7 +73,12 @@ const Sidebar = () => {
     };
 
     const closeModal = () => {
-        setShowNewConversationModal(false);
+        setProfileModal(false);
+    };
+
+    const openProfileModal = () => {
+        setProfileModal(true);
+
     };
 
     const sidebarFilteredUsers = users.filter(user =>
@@ -83,7 +89,6 @@ const Sidebar = () => {
         user.username.toLowerCase().includes(modalSearchQuery.toLowerCase())
     );
 
-    // Function to handle status change
     const handleChangeStatus = async (status) => {
         try {
             await axios.put('http://localhost:5000/api/users/status', {
@@ -97,27 +102,32 @@ const Sidebar = () => {
             console.log(error);
         }
     };
+    const bottomOfViewportX = window.scrollX + window.innerWidth;
+    const bottomOfViewportY = window.scrollY + window.innerHeight;
 
     return (
         <div className="w-full flex flex-row items-center gap-5 h-full">
             <div className="flex flex-col h-full justify-between p-3 rounded-xl items-center gap-5 bg-red-100">
                 <div className="gap-5 flex flex-col w-full">
-                    <h1 className="text-2xl text-center font-bold">Users</h1>
-                    <p className="text-sm text-center">{mainusers.status}</p>
-                    <div className="text-sm">
-                        <button className="p-2 bg-blue-500 text-white rounded-md mr-2" onClick={() => handleChangeStatus('available')}>Available</button>
-                        <button className="p-2 bg-yellow-500 text-white rounded-md" onClick={() => handleChangeStatus('busy')}>Busy</button>
+                    <div className="flex items-center w-full p-2 justify-between">
+                        <h1 className="text-2xl text-center font-bold">Users</h1>
+                        <p className="text-sm bg-green-200 rounded-lg px-2 font-semibold text-center">S: {mainusers.status}</p>
+                    </div>
+                    <div className="text-sm flex flex-row items-center gap-2">
+                        <p>Status:</p>
+                        <button className="px-2 py-1 bg-blue-600 text-white rounded-lg " onClick={() => handleChangeStatus('available')}>Available</button>
+                        <button className="px-2 py-1 bg-yellow-500 text-white rounded-lg" onClick={() => handleChangeStatus('busy')}>Busy</button>
                     </div>
                     <input
                         type="text"
                         placeholder="Search users"
                         value={sidebarSearchQuery}
                         onChange={(e) => setSidebarSearchQuery(e.target.value)}
-                        className="w-full p-2 mb-2 border rounded-md"
+                        className="w-full p-2 mb-2 border rounded-lg"
                     />
                     <div className="w-full flex flex-col gap-2">
                         {sidebarFilteredUsers.map((user, index) => (
-                            <div key={index} className="w-full flex items-center gap-2 p-2 bg-gray-100 rounded-md" onClick={() => handleUserSelection(user)}>
+                            <div key={index} className="w-full cursor-pointer hover:scale-105 transition-all flex items-center gap-2 p-2 bg-gray-100 rounded-md" onClick={() => handleUserSelection(user)}>
                                 <img src={user.profilePic} alt={user.username} className="w-10 h-10 object-cover rounded-full" />
                                 <div className="flex flex-col gap-1">
                                     <span className="text-sm font-semibold">{user.username}</span>
@@ -136,13 +146,16 @@ const Sidebar = () => {
                         ))}
                     </div>
                 </div>
-                <div className="flex flex-row items-center justify-between w-full">
-                    <button className="p-2 bg-red-500 text-white rounded-md" onClick={handleNewConversationClick}>New Conversation</button>
-                    <button className="p-2 bg-green-500 text-white rounded-md">Profile</button>
+                <div className="flex flex-row text-sm items-center justify-between w-full">
+                    <button className="w-1/3 p-2 bg-red-500 text-white rounded-md" onClick={handleNewConversationClick}>New </button>
+                    <button className="w-1/3 p-2 bg-green-500 text-white rounded-md" onClick={openProfileModal}>Profile</button>
                 </div>
             </div>
 
-            <Conversation selectedUser={selectedUser} status={userStatus} />
+            <Conversation selectedUser={selectedUser} status={userStatus}
+                bottomOfViewportX={bottomOfViewportX}
+                bottomOfViewportY={bottomOfViewportY}
+            />
             {showNewConversationModal && (
                 <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
                     <div className="w-1/3 bg-red-100 p-4 rounded-lg">
@@ -167,7 +180,9 @@ const Sidebar = () => {
                 </div>
             )}
 
-            {/* Button to change user status */}
+            {profileModal && (
+                <Profile closeModal={closeModal} userId={authUser._id} />
+            )}
 
         </div>
     );

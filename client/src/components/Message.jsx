@@ -5,7 +5,7 @@ const Message = ({ message, isSentByCurrentUser, timestamp }) => {
 
     return (
         <div className={`flex ${isSentByCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}>
-            <div className={`bg-blue-400 font-semibold rounded-xl px-4 py-2 ${isSentByCurrentUser ? 'bg-blue-500 text-white ' : ''}`}>
+            <div className={`bg-blue-400 font-semibold rounded-xl px-4 py-2 ${isSentByCurrentUser ? 'bg-blue-500 text-white ' : 'bg-blue-100 text-blue-800'}`}>
 
                 {message.attachments && message.attachments.length > 0 ? (
                     <div className=''>
@@ -31,7 +31,7 @@ const Message = ({ message, isSentByCurrentUser, timestamp }) => {
 
                     <div>{message.message}</div>
                 )}
-                <div className="text-[8px] w-full text-end text-gray-100">{formattedTime}</div>
+                <div className={`text-[8px] w-full text-end ${isSentByCurrentUser ? 'text-gray-100 ' : 'text-gray-900'}`}>{formattedTime}</div>
             </div>
         </div>
     );

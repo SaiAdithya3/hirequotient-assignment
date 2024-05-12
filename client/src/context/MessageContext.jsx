@@ -1,4 +1,3 @@
-// MessageContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 import { SocketContext } from './SocketContext.jsx';
 
@@ -6,7 +5,7 @@ const MessageContext = createContext();
 
 const MessageProvider = ({ children }) => {
   const [messag, setMessag] = useState([]);
-  const { socket } = useContext(SocketContext); // Destructure socket from SocketContext
+  const { socket } = useContext(SocketContext); 
 
   useEffect(() => {
     if (socket) {
@@ -30,7 +29,7 @@ const MessageProvider = ({ children }) => {
   };
 
   return (
-    <MessageContext.Provider value={{ messag, sendMessage }}> {/* Ensure messages is used */}
+    <MessageContext.Provider value={{ messag, sendMessage }}> 
       {children}
     </MessageContext.Provider>
   );

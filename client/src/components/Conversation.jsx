@@ -21,15 +21,15 @@ const Conversation = ({ selectedUser, status }) => {
             userId: selectedUser && selectedUser._id
         })
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setMainUsers(res.data);
             })
             .catch(err => {
                 console.log(err);
-                toast.error('Error fetching user details');
+                // toast.error('Error fetching user details');
             });
     });
-    console.log(mainusers)
+    // console.log(mainusers)
 
 
     const imagekit = new ImageKit({
@@ -56,8 +56,13 @@ const Conversation = ({ selectedUser, status }) => {
     }, [messag, selectedUser]);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     };
+
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const sendMessage1 = async () => {
         try {
@@ -69,6 +74,7 @@ const Conversation = ({ selectedUser, status }) => {
             sendMessage(response.data.newMessage);
             setNewMessageText('');
             scrollToBottom();
+
         } catch (error) {
             console.error("Error sending message:", error);
             toast.error('Error sending message');
@@ -95,7 +101,6 @@ const Conversation = ({ selectedUser, status }) => {
             const attachmentUrl = response.url;
             console.log('Attachment URL:', attachmentUrl);
 
-            // Send message with attachment URL
             await axios.post(`http://localhost:5000/api/messages/send/${selectedUser._id}`, {
                 message: newMessageText,
                 senderId: authUser._id,
@@ -105,7 +110,6 @@ const Conversation = ({ selectedUser, status }) => {
                 }]
             });
 
-            // Clear the file input field
             event.target.value = '';
         } catch (error) {
             console.error('Error uploading file:', error);
@@ -119,15 +123,17 @@ const Conversation = ({ selectedUser, status }) => {
         } else if (['mp4', 'mov', 'avi', 'mkv', 'wmv'].includes(extension)) {
             return 'video';
         } else {
-            return null; // Unsupported file type
+            return null;
         }
     };
 
     return (
         <div className="w-3/4 bg-yellow-100 h-full flex rounded-2xl flex-col">
-            <h1 className="text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">{selectedUser ? `Conversation with ${selectedUser.username} - ${mainusers.status}` : 'Select a user to start conversation'}</h1>
+            <h1 className="flex items-center gap-4 text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">
+                {selectedUser ? <img src={selectedUser.profilePic} alt={selectedUser.username} className="w-14 h-14 object-cover rounded-full" /> : null}
+                {selectedUser ? ` ${selectedUser.username} - ${mainusers.status}` : 'Select a user to start conversation'}</h1>
             <div className="p-8 overflow-y-auto flex-grow">
-                <div className="rounded-lg h-full">
+                <div className="rounded-lg h-full" >
                     {messages.map((message, index) => (
                         <Message
                             key={index}
@@ -136,14 +142,21 @@ const Conversation = ({ selectedUser, status }) => {
                             timestamp={message.createdAt}
                         />
                     ))}
+                    {/* <div /> */}
                     <div ref={messagesEndRef} />
                 </div>
             </div>
-            <div className="flex justify-between items-center p-4">
-                <input type="text" placeholder="Type your message..." className="border rounded-lg py-2 px-4 w-3/4" value={newMessageText} onChange={(e) => setNewMessageText(e.target.value)} />
-                <input type="file" className="border rounded-lg py-2 px-4 w-1/4" onChange={handleFileUpload} />
-                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg" onClick={sendMessage1}>Send</button>
-            </div>
+            {selectedUser && (
+                <div className="flex justify-between gap-2 items-center p-4">
+                    <input type="text" placeholder="Type your message..." className="border rounded-lg py-2 px-4 w-3/4" value={newMessageText} onChange={(e) => setNewMessageText(e.target.value)} />
+                    <label className="relative cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg ">
+                        <span>Attach </span>
+                        <input type="file" className="opacity-0 absolute inset-0 w-full h-full z-10" onChange={handleFileUpload} />
+                    </label>
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg" onClick={sendMessage1}>Send</button>
+                </div>
+            )}
+
         </div>
     );
 }

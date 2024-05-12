@@ -2,32 +2,32 @@ import jwt from 'jsonwebtoken';
 import User from "../models/User.js";
 
 const checkuser = async (req, res, next) => {
-	try {
-		const token = req.cookies.token;
+    try {
+        const token = req.body.token;
 
-		if (!token) {
-			return res.status(401).json({ error: "Unauthorized - No Token Provided" });
-		}
+        if (!token) {
+            return res.status(401).json({ error: "Unauthorized - No Token Provided" });
+        }
 
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-		if (!decoded) {
-			return res.status(401).json({ error: "Unauthorized - Invalid Token" });
-		}
-		// console.log(decoded);
-		const user = await User.findById(decoded.id).select("-password");
+        if (!decoded) {
+            return res.status(401).json({ error: "Unauthorized - Invalid Token" });
+        }
 
-		if (!user) {
-			return res.status(404).json({ error: "User not found" });
-		}
+        const user = await User.findById(decoded.id).select("-password");
 
-		req.user = user;
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
-		next();
-	} catch (error) {
-		console.log("Error in protectRoute middleware: ", error.message);
-		res.status(500).json({ error: "Internal server error" });
-	}
+        req.user = user;
+
+        next();
+    } catch (error) {
+        console.log("Error in protectRoute middleware: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
 
 export default checkuser;

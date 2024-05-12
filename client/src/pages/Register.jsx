@@ -4,6 +4,8 @@ import axios from 'axios';
 import { AiOutlineMail, AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 import { toast } from 'sonner';
 import { AuthContext } from '../context/AuthContext';
+import { IoMaleFemaleSharp } from "react-icons/io5";
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -108,7 +110,7 @@ const Register = () => {
                   </div>
                   <div className="relative flex items-center mt-4">
                     <span className="absolute">
-                      {/* Gender icon */}
+                    <IoMaleFemaleSharp className='w-6 h-6 mx-3 text-gray-300'/>
                     </span>
                     <select
                       name="gender"

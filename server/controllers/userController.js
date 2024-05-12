@@ -41,7 +41,6 @@ export const changeUserStatus = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Validate the status value
         if (status !== 'available' && status !== 'busy') {
             return res.status(400).json({ message: 'Invalid status value' });
         }
@@ -69,7 +68,6 @@ export const getUserDetails = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Return user details
         res.status(200).json(user);
     } catch (error) {
         console.error("Error in getUserDetails:", error.message);
