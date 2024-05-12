@@ -64,7 +64,7 @@ Follow these steps to run the application locally:
     ```
 7. **Access the application**
     *Frontend*: http://localhost:5173/
-    *Backend*:http://localhost:5000/
+    *Backend*:https://localhost:5000/
 
 
 ## Highlights

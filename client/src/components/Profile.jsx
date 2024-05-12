@@ -14,7 +14,7 @@ const Profile = ({ closeModal, userId, setAuth }) => {
     const history = useNavigate();
 
     useEffect(() => {
-        axios.post('http://localhost:5000/api/users/details', {
+        axios.post('https://chatapplication-2tey.onrender.com/api/users/details', {
             userId: userId
         })
             .then(res => {
@@ -29,7 +29,7 @@ const Profile = ({ closeModal, userId, setAuth }) => {
 
     const handleEditProfile = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/edit-profile', {
+            const response = await axios.post('https://chatapplication-2tey.onrender.com/api/auth/edit-profile', {
                 userId: userId,
                 username: newUsername,
                 email: newEmail
@@ -50,7 +50,7 @@ const Profile = ({ closeModal, userId, setAuth }) => {
 
     const handleChangePassword = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/change-password', {
+            const response = await axios.post('https://chatapplication-2tey.onrender.com/api/auth/change-password', {
                 userId: userId,
                 oldPassword: oldPassword,
                 newPassword: newPassword,

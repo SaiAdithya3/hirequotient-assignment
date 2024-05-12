@@ -17,7 +17,7 @@ const Conversation = ({ selectedUser, status }) => {
     const [mainusers, setMainUsers] = useState([]);
 
     useEffect(() => {
-        axios.post('http://localhost:5000/api/users/details', {
+        axios.post('https://chatapplication-2tey.onrender.com/api/users/details', {
             userId: selectedUser && selectedUser._id
         })
             .then(res => {
@@ -37,12 +37,12 @@ const Conversation = ({ selectedUser, status }) => {
         privateKey: "private_fnAbFnaYL6M4mb1q0gVH0KsyGG4=",
         urlEndpoint: "https://ik.imagekit.io/vsn/chat",
         transformationPosition: "path",
-        authenticationEndpoint: "http://localhost:5000/imagekit",
+        authenticationEndpoint: "https://chatapplication-2tey.onrender.com/imagekit",
     });
 
     useEffect(() => {
         if (selectedUser && authUser) {
-            axios.get(`http://localhost:5000/api/messages/${authUser._id}/${selectedUser._id}`)
+            axios.get(`https://chatapplication-2tey.onrender.com/api/messages/${authUser._id}/${selectedUser._id}`)
                 .then(res => {
                     const serverMessages = res.data.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
                     setMessages(serverMessages);
@@ -66,7 +66,7 @@ const Conversation = ({ selectedUser, status }) => {
 
     const sendMessage1 = async () => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/messages/send/${selectedUser._id}`, {
+            const response = await axios.post(`https://chatapplication-2tey.onrender.com/api/messages/send/${selectedUser._id}`, {
                 message: newMessageText,
                 senderId: authUser._id,
                 status: selectedUser.status
@@ -101,7 +101,7 @@ const Conversation = ({ selectedUser, status }) => {
             const attachmentUrl = response.url;
             console.log('Attachment URL:', attachmentUrl);
 
-            await axios.post(`http://localhost:5000/api/messages/send/${selectedUser._id}`, {
+            await axios.post(`https://chatapplication-2tey.onrender.com/api/messages/send/${selectedUser._id}`, {
                 message: newMessageText,
                 senderId: authUser._id,
                 attachments: [{

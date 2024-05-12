@@ -25,7 +25,7 @@ const Register = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
+      const response = await axios.post('https://chatapplication-2tey.onrender.com/api/auth/signup', formData);
       // console.log('Form Data:', formData);
       toast.success('User registered successfully');
       // localStorage.setItem('chat-user', JSON.stringify(response.data));

@@ -21,7 +21,7 @@ const Sidebar = () => {
     const [profileDetails, setProfileDetails] = useState(null);
 
     useEffect(() => {
-        axios.post('http://localhost:5000/api/users/details', {
+        axios.post('https://chatapplication-2tey.onrender.com/api/users/details', {
             userId: authUser && authUser._id
         })
             .then(res => {
@@ -35,7 +35,7 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
-        axios.post('http://localhost:5000/api/users/check', {
+        axios.post('https://chatapplication-2tey.onrender.com/api/users/check', {
             userId: authUser && authUser._id
         })
             .then(res => {
@@ -51,7 +51,7 @@ const Sidebar = () => {
     }, [selectedUser]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/users').then(res => {
+        axios.get('https://chatapplication-2tey.onrender.com/api/users').then(res => {
             setAllUsers(res.data);
         }).catch(err => {
             console.log(err);
@@ -91,7 +91,7 @@ const Sidebar = () => {
 
     const handleChangeStatus = async (status) => {
         try {
-            await axios.put('http://localhost:5000/api/users/status', {
+            await axios.put('https://chatapplication-2tey.onrender.com/api/users/status', {
                 userId: authUser._id,
                 status: status
             });
