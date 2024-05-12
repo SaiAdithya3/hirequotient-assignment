@@ -5,13 +5,13 @@ import { SocketContext } from './SocketContext.jsx';
 const MessageContext = createContext();
 
 const MessageProvider = ({ children }) => {
-  const [messag, setMessages] = useState([]);
-  const socket = useContext(SocketContext);
+  const [messag, setMessag] = useState([]);
+  const { socket } = useContext(SocketContext); // Destructure socket from SocketContext
 
   useEffect(() => {
     if (socket) {
       socket.on('new-message', (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
+        setMessag((prevMessages) => [...prevMessages, message]);
         console.log('New message received:', message);
       });
     }
@@ -30,7 +30,7 @@ const MessageProvider = ({ children }) => {
   };
 
   return (
-    <MessageContext.Provider value={{ messag, sendMessage }}>
+    <MessageContext.Provider value={{ messag, sendMessage }}> {/* Ensure messages is used */}
       {children}
     </MessageContext.Provider>
   );

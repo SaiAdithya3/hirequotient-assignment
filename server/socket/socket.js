@@ -2,7 +2,6 @@ import { Server } from "socket.io";
 import http from "http";
 
 const server = http.createServer();
-
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -12,30 +11,18 @@ const io = new Server(server, {
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+	console.log("User connected", socket.id);
 
-  socket.on("new-user", (userId) => {
-    userSocketMap[userId] = socket.id;
-    console.log(`User ${userId} connected with socket ID ${socket.id}`);
-    io.emit("online-users", Object.keys(userSocketMap));
-  });
+	const userId = socket.handshake.query.userId;
+	if (userId != "undefined") userSocketMap[userId] = socket.id;
 
-  socket.on("new-message", (message) => {
-    console.log("New message received:", message);
-    io.emit("new-message", message);
-  });
+	io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  socket.on("disconnect", () => {
-
-    Object.keys(userSocketMap).forEach((userId) => {
-      if (userSocketMap[userId] === socket.id) {
-        delete userSocketMap[userId];
-        console.log(`User ${userId} disconnected`);
-        io.emit("online-users", Object.keys(userSocketMap));
-      }
-    });
-  });
-
+	socket.on("disconnect", () => {
+		console.log("user disconnected", socket.id);
+		delete userSocketMap[userId];
+		io.emit("getOnlineUsers", Object.keys(userSocketMap));
+	});
 });
 
 export default io;

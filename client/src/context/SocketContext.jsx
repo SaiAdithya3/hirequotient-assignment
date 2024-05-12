@@ -1,28 +1,43 @@
-// SocketContext.jsx
-import { createContext, useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import { createContext, useState, useEffect, useContext } from "react";
+import { useAuthContext } from "./AuthContext";
+import io from "socket.io-client";
 
 const SocketContext = createContext();
 
+export const useSocketContext = () => {
+  return useContext(SocketContext);
+};
+
 const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { authUser } = useAuthContext();
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000');
+		if (authUser) {
+			const socket = io("http://localhost:5000", {
+				query: {
+					userId: authUser._id,
+				},
+			});
 
-    newSocket.on('connect', () => {
-      console.log('Connected to server');
-    });
+			setSocket(socket);
 
-    setSocket(newSocket);
+			socket.on("getOnlineUsers", (users) => {
+				setOnlineUsers(users);
+			});
 
-    return () => {
-      newSocket.close();
-    };
-  }, []);
+			return () => socket.close();
+		} else {
+			if (socket) {
+				socket.close();
+				setSocket(null);
+			}
+		}
+	}, [authUser]);
 
   return (
-    <SocketContext.Provider value={socket}>
+    <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}
     </SocketContext.Provider>
   );
