@@ -45,8 +45,8 @@ const Conversation = ({ selectedUser }) => {
     };
 
     return (
-        <div className="w-3/4 bg-yellow-100 h-full flex flex-col">
-                    <h1 className="text-xl font-bold p-4">{selectedUser ? `Conversation with ${selectedUser.username}` : 'Select a user to start conversation'}</h1>
+        <div className="w-3/4 bg-yellow-100 h-full flex rounded-2xl flex-col">
+            <h1 className="text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">{selectedUser ? `Conversation with ${selectedUser.username}` : 'Select a user to start conversation'}</h1>
             <div className="p-8 overflow-y-auto flex-grow">
                 <div className="rounded-lg h-full">
                     {messages.map((message, index) => (

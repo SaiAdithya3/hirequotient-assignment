@@ -50,10 +50,14 @@ const Sidebar = () => {
                                 <img src={user.profilePic} alt={user.username} className="w-10 h-10 object-cover rounded-full" />
                                 <div className="flex flex-col gap-1">
                                     <span className="text-sm font-semibold">{user.username}</span>
-                                    {isUserOnline(user._id) &&
+                                    {isUserOnline(user._id) ?
                                         <div className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                                             <p className="text-green-500 text-xs">online</p>
+                                        </div> :
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                            <p className="text-red-500 text-xs">offline</p>
                                         </div>
                                     }
                                 </div>
