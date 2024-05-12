@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://chatapplication-2tey.onrender.com', 'https://chatapplication-eta.vercel.app/'],
+    origin: ['http://localhost:5173', 'https://chatapplication-2tey.onrender.com', 'https://chatapplication-eta.vercel.app'],
     credentials: true,
 }));
 
