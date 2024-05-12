@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { MessageContext } from '../context/MessageContext';
 import Message from './Message';
+import ImageKit from 'imagekit';
 
 const Conversation = ({ selectedUser }) => {
     const [messages, setMessages] = useState([]);
@@ -11,6 +12,13 @@ const Conversation = ({ selectedUser }) => {
     const { authUser } = useContext(AuthContext);
     const { sendMessage } = useContext(MessageContext);
     const messagesEndRef = useRef(null);
+    const imagekit = new ImageKit({
+        publicKey: "public_ffNQ43/5mSLdUUnli2yQpX2nlxU=",
+        privateKey: "private_fnAbFnaYL6M4mb1q0gVH0KsyGG4=",
+        urlEndpoint: "https://ik.imagekit.io/vsn/chat",
+        transformationPosition: "path",
+        authenticationEndpoint: "http://localhost:5000/imagekit",
+    });
 
     useEffect(() => {
         if (selectedUser && authUser) {
@@ -44,6 +52,52 @@ const Conversation = ({ selectedUser }) => {
         }
     };
 
+    const handleFileUpload = async (event) => {
+        try {
+            const file = event.target.files[0];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const fileType = getFileType(fileExtension);
+            if (!fileType) {
+                console.error('Unsupported file type');
+                return;
+            }
+
+            const response = await imagekit.upload({
+                file: file,
+                fileName: file.name,
+                folder: "/attachments/",
+            });
+
+            const attachmentUrl = response.url;
+            console.log('Attachment URL:', attachmentUrl);
+
+            // Send message with attachment URL
+            await axios.post(`http://localhost:5000/api/messages/send/${selectedUser._id}`, {
+                message: newMessageText,
+                senderId: authUser._id,
+                attachments: [{
+                    type: fileType,
+                    url: attachmentUrl
+                }]
+            });
+
+            // Clear the file input field
+            event.target.value = '';
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    };
+
+    const getFileType = (extension) => {
+        if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
+            return 'image';
+        } else if (['mp4', 'mov', 'avi', 'mkv', 'wmv'].includes(extension)) {
+            return 'video';
+        } else {
+            return null; // Unsupported file type
+        }
+    };
+
     return (
         <div className="w-3/4 bg-yellow-100 h-full flex rounded-2xl flex-col">
             <h1 className="text-xl font-bold p-4 bg-yellow-300 rounded-t-2xl">{selectedUser ? `Conversation with ${selectedUser.username}` : 'Select a user to start conversation'}</h1>
@@ -52,7 +106,7 @@ const Conversation = ({ selectedUser }) => {
                     {messages.map((message, index) => (
                         <Message
                             key={index}
-                            message={message.message}
+                            message={message}
                             isSentByCurrentUser={message.senderId === authUser._id}
                             timestamp={message.createdAt}
                         />
@@ -62,6 +116,7 @@ const Conversation = ({ selectedUser }) => {
             </div>
             <div className="flex justify-between items-center p-4">
                 <input type="text" placeholder="Type your message..." className="border rounded-lg py-2 px-4 w-3/4" value={newMessageText} onChange={(e) => setNewMessageText(e.target.value)} />
+                <input type="file" className="border rounded-lg py-2 px-4 w-1/4" onChange={handleFileUpload} />
                 <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg" onClick={sendMessage1}>Send</button>
             </div>
         </div>

@@ -9,6 +9,11 @@ const Sidebar = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const { authUser } = useContext(AuthContext);
     const { onlineUsers } = useSocketContext();
+    const [allusers, setAllUsers] = useState([]);
+    const [showNewConversationModal, setShowNewConversationModal] = useState(false);
+    const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
+    const [modalSearchQuery, setModalSearchQuery] = useState('');
+
 
     useEffect(() => {
         console.log('Online users:', onlineUsers);
@@ -27,15 +32,40 @@ const Sidebar = () => {
             .catch(err => {
                 console.log(err);
             });
-    }, []);
+    }, [selectedUser]);
 
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/users').then(res => {
+            setAllUsers(res.data);
+            // console.log(allusers)
+        }).catch(err => {
+            console.log(err);
+        });
+    }, []);
     const handleUserSelection = (user) => {
         setSelectedUser(user);
+        setShowNewConversationModal(false);
     }
 
     const isUserOnline = (userId) => {
         return onlineUsers.includes(userId);
     };
+
+    const handleNewConversationClick = () => {
+        setShowNewConversationModal(true);
+    };
+
+    const closeModal = () => {
+        setShowNewConversationModal(false);
+    };
+
+    const sidebarFilteredUsers = users.filter(user =>
+        user.username.toLowerCase().includes(sidebarSearchQuery.toLowerCase())
+    );
+
+    const modalFilteredUsers = allusers.filter(user =>
+        user.username.toLowerCase().includes(modalSearchQuery.toLowerCase())
+    );
 
     return (
         <div className="w-full flex flex-row items-center gap-5 h-full">
@@ -43,9 +73,15 @@ const Sidebar = () => {
                 <div className="gap-5 flex flex-col w-full">
 
                     <h1 className="text-2xl text-center font-bold">Users</h1>
-                    <input type="text" placeholder="Search users" className="w-full p-2 bg-gray-100 rounded-md" />
+                    <input
+                        type="text"
+                        placeholder="Search users"
+                        value={sidebarSearchQuery}
+                        onChange={(e) => setSidebarSearchQuery(e.target.value)}
+                        className="w-full p-2 mb-2 border rounded-md"
+                    />
                     <div className="w-full flex flex-col gap-2">
-                        {users.map((user, index) => (
+                        {sidebarFilteredUsers.map((user, index) => (
                             <div key={index} className="w-full flex items-center gap-2 p-2 bg-gray-100 rounded-md" onClick={() => handleUserSelection(user)}>
                                 <img src={user.profilePic} alt={user.username} className="w-10 h-10 object-cover rounded-full" />
                                 <div className="flex flex-col gap-1">
@@ -66,12 +102,36 @@ const Sidebar = () => {
                     </div>
                 </div>
                 <div className="flex flex-row items-center justify-between w-full">
-                    <button className="p-2 bg-red-500 text-white rounded-md">Logout</button>
+                    <button className="p-2 bg-red-500 text-white rounded-md" onClick={handleNewConversationClick}>New Conversation</button>
                     <button className="p-2 bg-green-500 text-white rounded-md">Profile</button>
                 </div>
             </div>
 
             <Conversation selectedUser={selectedUser} />
+            {showNewConversationModal && (
+                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
+                    <div className="w-1/3 bg-red-100 p-4 rounded-lg">
+                        <h2 className="text-xl font-bold mb-4">Select User to start a new conversation</h2>
+                        <input
+                            type="text"
+                            placeholder="Search users"
+                            value={modalSearchQuery}
+                            onChange={(e) => setModalSearchQuery(e.target.value)}
+                            className="w-full p-2 mb-2 border rounded-md"
+                        />
+                        <div className="flex flex-col gap-2">
+                            {modalFilteredUsers.map((user, index) => (
+                                <div key={index} className="flex items-center gap-2 p-2 bg-gray-100 rounded-md" onClick={() => handleUserSelection(user)}>
+                                    <img src={user.profilePic} alt={user.username} className="w-10 h-10 object-cover rounded-full" />
+                                    <span className="text-sm font-semibold">{user.username}</span>
+
+                                </div>
+                            ))}
+                        </div>
+                        <button onClick={closeModal} className="mt-2 w-full p-2 bg-red-500 text-white rounded-md">Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
