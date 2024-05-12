@@ -87,5 +87,51 @@ export const logoutUser = (req, res) => {
     }
 };
 
+export const editProfile = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const { username, email } = req.body;
 
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
+        if (username) user.username = username;
+        if (email) user.email = email;
+
+        await user.save();
+        return res.status(200).json({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.log("Error in edit profile controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const { oldPassword, newPassword, confirmPassword } = req.body;
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+        const user = await User.findById(userId);
+        const isPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: "Invalid old password" });
+        }
+
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+        return res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.log("Error in change password controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};

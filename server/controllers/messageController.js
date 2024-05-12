@@ -22,7 +22,7 @@ export const sendMessage = async (req, res) => {
             senderId,
             receiverId,
             message,
-            attachments: attachments ? attachments : [] // Set attachments to empty array if not provided
+            attachments: attachments ? attachments : [] 
         });
 
         conversation.messages.push(newMessage._id);
@@ -57,7 +57,6 @@ export const getMessages = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
-
 
 // 663f52026da3aa36fc0c42c1
 //663f5849937900f03692241f
