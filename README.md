@@ -68,6 +68,10 @@ Follow these steps to run the application locally:
     *Frontend*: http://localhost:5173/
     *Backend*:https://localhost:5000/
 
+## Schema design 
+![schema design](https://github.com/SaiAdithya3/hirequotient-assignment/assets/91713156/741adc2c-efc9-440c-803c-28b5fafcddb3)
+
+
 
 ## Highlights
 
